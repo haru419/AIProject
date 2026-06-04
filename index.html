@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<input id="msg">
+<button onclick="send()">送信</button>
+
+<div id="chat"></div>
+
+<script>
+
+const API_KEY = "ここにAPIキー";
+
+async function send(){
+
+const msg =
+document.getElementById("msg").value;
+
+const res = await fetch(
+`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+contents:[
+{
+parts:[
+{
+text:msg
+}
+]
+}
+]
+})
+});
+
+const data = await res.json();
+
+const reply =
+data.candidates[0]
+.content.parts[0].text;
+
+document.getElementById("chat")
+.innerHTML += `
+<div>あなた:${msg}</div>
+<div>AI:${reply}</div>
+`;
+
+}
+
+</script>
+</body>
+</html>
