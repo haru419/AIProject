@@ -7,7 +7,7 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_I61LEIVKWnAvF9apPewAaQ_5k8ptYaS";
 
-const supabase =
+const db =
 window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
