@@ -5,7 +5,7 @@ const SUPABASE_URL =
 "https://hbmckzwrzmcyabeklxpj.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_I61LEIVKWnAvF9apPewAaQ_5k8ptYaS";
+"あなたのSupabaseキー";
 
 const db =
 window.supabase.createClient(
@@ -13,9 +13,14 @@ SUPABASE_URL,
 SUPABASE_KEY
 );
 
-const chat = document.getElementById("chat");
-const input = document.getElementById("msg");
-const loveText = document.getElementById("love");
+const chat =
+document.getElementById("chat");
+
+const input =
+document.getElementById("msg");
+
+const loveText =
+document.getElementById("love");
 
 let love =
 Number(localStorage.getItem("love")) || 0;
@@ -37,7 +42,8 @@ div.className = type;
 div.textContent = text;
 
 chat.appendChild(div);
-chat.scrollTop = chat.scrollHeight;
+chat.scrollTop =
+chat.scrollHeight;
 ```
 
 }
@@ -79,8 +85,8 @@ try{
     }
 
     return data
-    .map(v => v.content)
-    .join("\n");
+        .map(v=>v.content)
+        .join("\n");
 
 }catch(err){
 
@@ -95,10 +101,17 @@ try{
 function updateLoveByMessage(text){
 
 ```
-if(text.includes("好き")) love += 10;
-if(text.includes("ありがとう")) love += 5;
-if(text.includes("かわいい")) love += 3;
-if(text.includes("嫌い")) love -= 10;
+if(text.includes("好き"))
+    love += 10;
+
+if(text.includes("ありがとう"))
+    love += 5;
+
+if(text.includes("かわいい"))
+    love += 3;
+
+if(text.includes("嫌い"))
+    love -= 10;
 
 updateLove();
 ```
@@ -113,9 +126,14 @@ await loadMemories();
 
 let relation = "初対面";
 
-if(love >= 30) relation = "友達";
-if(love >= 60) relation = "仲良し";
-if(love >= 100) relation = "恋人";
+if(love >= 30)
+    relation = "友達";
+
+if(love >= 60)
+    relation = "仲良し";
+
+if(love >= 100)
+    relation = "恋人";
 
 const prompt = `
 ```
@@ -149,7 +167,8 @@ await fetch(
     {
         method:"POST",
         headers:{
-            "Content-Type":"application/json"
+            "Content-Type":
+            "application/json"
         },
         body:JSON.stringify({
             contents:[
@@ -171,7 +190,9 @@ await response.json();
 console.log(data);
 
 if(data.error){
-    throw new Error(data.error.message);
+    throw new Error(
+        data.error.message
+    );
 }
 
 if(!data.candidates){
