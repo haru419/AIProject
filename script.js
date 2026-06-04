@@ -193,6 +193,10 @@ ${message}
 
     console.log(data);
 
+    return data.candidates[0]
+.content.parts[0]
+.text;
+
     if(data.error){
 
         throw new Error(
