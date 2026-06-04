@@ -213,14 +213,7 @@ ${message}
 
 async function sendMessage(){
 
-    async function sendMessage(){
-
-    alert("送信ボタンが押された");
-
-    const text =
-    input.value.trim();
-
-}
+     alert("送信ボタンが押された");
 
     const text =
     input.value.trim();
