@@ -220,7 +220,6 @@ async function sendMessage(){
     const text =
     input.value.trim();
 
-    ...
 }
 
     const text =
