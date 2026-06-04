@@ -34,7 +34,7 @@ localStorage.setItem("love", love);
 
 function addMessage(text,type){
 
-```
+
 const div =
 document.createElement("div");
 
@@ -44,13 +44,13 @@ div.textContent = text;
 chat.appendChild(div);
 chat.scrollTop =
 chat.scrollHeight;
-```
+
 
 }
 
 async function saveMemory(text){
 
-```
+
 try{
 
     await db
@@ -64,13 +64,13 @@ try{
     console.error(err);
 
 }
-```
+
 
 }
 
 async function loadMemories(){
 
-```
+
 try{
 
     const {data,error} =
@@ -94,13 +94,13 @@ try{
     return "";
 
 }
-```
+
 
 }
 
 function updateLoveByMessage(text){
 
-```
+
 if(text.includes("好き"))
     love += 10;
 
@@ -114,13 +114,13 @@ if(text.includes("嫌い"))
     love -= 10;
 
 updateLove();
-```
+
 
 }
 
 async function askGemini(message){
 
-```
+
 const memories =
 await loadMemories();
 
@@ -136,7 +136,7 @@ if(love >= 100)
     relation = "恋人";
 
 const prompt = `
-```
+
 
 あなたはミライです。
 
@@ -160,7 +160,7 @@ ${memories}
 ${message}
 `;
 
-```
+
 const response =
 await fetch(
     WORKER_URL,
@@ -204,13 +204,11 @@ if(!data.candidates){
 return data.candidates[0]
     .content.parts[0]
     .text;
-```
 
 }
 
 async function sendMessage(){
 
-```
 const text =
 input.value.trim();
 
@@ -247,7 +245,6 @@ try{
         "ai"
     );
 }
-```
 
 }
 
@@ -265,7 +262,6 @@ document.getElementById("voiceBtn");
 
 if(voiceBtn){
 
-```
 voiceBtn.onclick = ()=>{
 
     const SpeechRecognition =
@@ -295,7 +291,6 @@ voiceBtn.onclick = ()=>{
 
     rec.start();
 };
-```
 
 }
 
