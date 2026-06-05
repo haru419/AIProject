@@ -125,7 +125,7 @@ function updateLoveByMessage(text){
 
 async function askGemini(message){
 
-    const memories =
+    const memories ="";
 
     let relation =
     "初対面";
