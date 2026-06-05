@@ -1,7 +1,7 @@
 console.log("script loaded");
 
 const WORKER_URL =
-"https://mirai-ai.nanbari-haruki.workers.dev";
+"https://mirai-ai.nanbari-haruki.workers.dev/";
 
 const SUPABASE_URL =
 "https://hbmckzwrzmcyabeklxpj.supabase.co";
