@@ -1,16 +1,18 @@
+console.log("script loaded");
+
 const WORKER_URL =
-"https://mirai-ai.nanbari-haruki.workers.dev/";
+"https://YOUR-WORKER.workers.dev";
 
 const SUPABASE_URL =
-"https://hbmckzwrzmcyabeklxpj.supabase.co";
+"https://YOUR-PROJECT.supabase.co";
 
 const SUPABASE_KEY =
-"あなたのSupabaseキー";
+"YOUR-SUPABASE-PUBLISHABLE-KEY";
 
 const db =
 window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
 
 const chat =
@@ -28,116 +30,117 @@ Number(localStorage.getItem("love")) || 0;
 updateLove();
 
 function updateLove(){
-loveText.textContent = love;
-localStorage.setItem("love", love);
+
+    if(loveText){
+        loveText.textContent = love;
+    }
+
+    localStorage.setItem(
+        "love",
+        love
+    );
 }
 
 function addMessage(text,type){
 
+    if(!chat) return;
 
-const div =
-document.createElement("div");
+    const div =
+    document.createElement("div");
 
-div.className = type;
-div.textContent = text;
+    div.className = type;
 
-chat.appendChild(div);
-chat.scrollTop =
-chat.scrollHeight;
+    div.textContent = text;
 
+    chat.appendChild(div);
 
+    chat.scrollTop =
+    chat.scrollHeight;
 }
 
 async function saveMemory(text){
 
+    try{
 
-try{
+        await db
+        .from("memories")
+        .insert({
+            content:text
+        });
 
-    await db
-    .from("memories")
-    .insert({
-        content:text
-    });
+    }catch(err){
 
-}catch(err){
+        console.error(err);
 
-    console.error(err);
-
-}
-
-
+    }
 }
 
 async function loadMemories(){
 
+    try{
 
-try{
+        const {data,error} =
+        await db
+        .from("memories")
+        .select("*")
+        .order("id");
 
-    const {data,error} =
-    await db
-    .from("memories")
-    .select("*")
-    .order("id");
+        if(error){
 
-    if(error){
-        console.error(error);
-        return "";
-    }
+            console.error(error);
 
-    return data
-        .map(v=>v.content)
+            return "";
+
+        }
+
+        return data
+        .map(v => v.content)
         .join("\n");
 
-}catch(err){
+    }catch(err){
 
-    console.error(err);
-    return "";
+        console.error(err);
 
-}
+        return "";
 
-
+    }
 }
 
 function updateLoveByMessage(text){
 
+    if(text.includes("好き"))
+        love += 10;
 
-if(text.includes("好き"))
-    love += 10;
+    if(text.includes("ありがとう"))
+        love += 5;
 
-if(text.includes("ありがとう"))
-    love += 5;
+    if(text.includes("かわいい"))
+        love += 3;
 
-if(text.includes("かわいい"))
-    love += 3;
+    if(text.includes("嫌い"))
+        love -= 10;
 
-if(text.includes("嫌い"))
-    love -= 10;
-
-updateLove();
-
-
+    updateLove();
 }
 
 async function askGemini(message){
 
+    const memories =
+    await loadMemories();
 
-const memories =
-await loadMemories();
+    let relation =
+    "初対面";
 
-let relation = "初対面";
+    if(love >= 30)
+        relation = "友達";
 
-if(love >= 30)
-    relation = "友達";
+    if(love >= 60)
+        relation = "仲良し";
 
-if(love >= 60)
-    relation = "仲良し";
+    if(love >= 100)
+        relation = "恋人";
 
-if(love >= 100)
-    relation = "恋人";
-
-const prompt = `
-
-
+    const prompt = `
 あなたはミライです。
 
 17歳の美少女AIです。
@@ -160,141 +163,158 @@ ${memories}
 ${message}
 `;
 
+    const response =
+    await fetch(
+        WORKER_URL,
+        {
+            method:"POST",
 
-const response =
-await fetch(
-    WORKER_URL,
-    {
-        method:"POST",
-        headers:{
-            "Content-Type":
-            "application/json"
-        },
-        body:JSON.stringify({
-            contents:[
-                {
-                    parts:[
-                        {
-                            text:prompt
-                        }
-                    ]
-                }
-            ]
-        })
+            headers:{
+                "Content-Type":
+                "application/json"
+            },
+
+            body:JSON.stringify({
+                contents:[
+                    {
+                        parts:[
+                            {
+                                text:prompt
+                            }
+                        ]
+                    }
+                ]
+            })
+        }
+    );
+
+    const data =
+    await response.json();
+
+    console.log(data);
+
+    if(data.error){
+
+        throw new Error(
+            data.error.message
+        );
+
     }
-);
 
-const data =
-await response.json();
+    if(!data.candidates){
 
-console.log(data);
+        throw new Error(
+            "Geminiから応答が返されませんでした"
+        );
 
-if(data.error){
-    throw new Error(
-        data.error.message
-    );
-}
+    }
 
-if(!data.candidates){
-    throw new Error(
-        "Geminiから応答が返されませんでした"
-    );
-}
-
-return data.candidates[0]
+    return data
+    .candidates[0]
     .content.parts[0]
     .text;
-
 }
 
 async function sendMessage(){
 
-const text =
-input.value.trim();
+    const text =
+    input.value.trim();
 
-if(!text) return;
-
-addMessage(
-    "あなた: " + text,
-    "user"
-);
-
-input.value = "";
-
-updateLoveByMessage(text);
-
-await saveMemory(text);
-
-try{
-
-    const reply =
-    await askGemini(text);
+    if(!text) return;
 
     addMessage(
-        "ミライ: " + reply,
-        "ai"
+        "あなた: " + text,
+        "user"
     );
 
-}catch(err){
+    input.value = "";
 
-    console.error(err);
+    updateLoveByMessage(text);
 
-    addMessage(
-        "通信エラー\n" +
-        err.message,
-        "ai"
-    );
+    await saveMemory(text);
+
+    try{
+
+        const reply =
+        await askGemini(text);
+
+        addMessage(
+            "ミライ: " + reply,
+            "ai"
+        );
+
+    }catch(err){
+
+        console.error(err);
+
+        addMessage(
+            "通信エラー\n" +
+            err.message,
+            "ai"
+        );
+
+    }
 }
 
-}
+window.sendMessage =
+sendMessage;
 
 input.addEventListener(
-"keydown",
-e => {
-if(e.key === "Enter"){
-sendMessage();
-}
-}
+    "keydown",
+    e => {
+
+        if(
+            e.key === "Enter"
+        ){
+            sendMessage();
+        }
+
+    }
 );
 
 const voiceBtn =
-document.getElementById("voiceBtn");
+document.getElementById(
+    "voiceBtn"
+);
 
 if(voiceBtn){
 
-voiceBtn.onclick = ()=>{
+    voiceBtn.onclick = ()=>{
 
-    const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
+        const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
 
-    if(!SpeechRecognition){
+        if(!SpeechRecognition){
 
-        alert(
-            "音声入力に対応していません"
-        );
+            alert(
+                "音声入力に対応していません"
+            );
 
-        return;
-    }
+            return;
+        }
 
-    const rec =
-    new SpeechRecognition();
+        const rec =
+        new SpeechRecognition();
 
-    rec.lang = "ja-JP";
+        rec.lang =
+        "ja-JP";
 
-    rec.onresult = e=>{
+        rec.onresult = e => {
 
-        input.value =
-        e.results[0][0]
-        .transcript;
+            input.value =
+            e.results[0][0]
+            .transcript;
+
+        };
+
+        rec.start();
+
     };
-
-    rec.start();
-};
 
 }
 
 addMessage(
-"ミライだよ！よろしくね♪",
-"ai"
+    "ミライだよ！よろしくね♪",
+    "ai"
 );
