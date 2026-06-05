@@ -4,7 +4,7 @@ const WORKER_URL =
 "https://mirai-ai.nanbari-haruki.workers.dev";
 
 const SUPABASE_URL =
-"https://hbmckzwrzmcyabeklxpj.supabase.co/";
+"https://hbmckzwrzmcyabeklxpj.supabase.co";
 
 const SUPABASE_KEY =
 "sb_publishable_I61LEIVKWnAvF9apPewAaQ_5k8ptYaS";
