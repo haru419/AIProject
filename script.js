@@ -231,7 +231,7 @@ async function sendMessage(){
 
     updateLoveByMessage(text);
 
-    await saveMemory(text);
+    //await saveMemory(text);
 
     try{
 
